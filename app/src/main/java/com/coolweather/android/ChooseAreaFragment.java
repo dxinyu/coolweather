@@ -2,15 +2,24 @@ package com.coolweather.android;
 
 import android.app.Fragment;
 import android.app.ProgressDialog;
+import android.content.ContentValues;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteOpenHelper;
 import android.os.Bundle;
+import android.support.v7.app.AlertDialog;
 import android.util.Log;
+import android.view.ContextMenu;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -45,6 +54,9 @@ public class ChooseAreaFragment extends Fragment {
     private ProgressBar progressDialog ;
     private TextView titleText;
     private Button backbutton;
+    private Button createDatabase;
+    private Button careButton;
+    private MyDatabaseHelper careDatabase;
     private ListView listView;
     private ArrayAdapter<String> adapter;
     private List<String> dataList = new ArrayList<>();
@@ -67,6 +79,9 @@ public class ChooseAreaFragment extends Fragment {
         View view = inflater.inflate(R.layout.choose_area,container,false);
         titleText = (TextView) view.findViewById(R.id.title_text);
         backbutton = (Button) view.findViewById(R.id.back_button);
+        careButton= (Button) view.findViewById(R.id.showCare);
+//       createDatabase = (Button)view.findViewById(R.id.create_database);
+
         listView = (ListView) view.findViewById(R.id.list_view);
         adapter = new ArrayAdapter<>(getContext(), android.R.layout.simple_list_item_1,dataList);
         listView.setAdapter(adapter);
@@ -108,6 +123,48 @@ public class ChooseAreaFragment extends Fragment {
 
             }
         });
+
+
+        listView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+
+
+                    listView.setOnCreateContextMenuListener(new View.OnCreateContextMenuListener() {
+                        @Override
+                        public void onCreateContextMenu(ContextMenu contextMenu, View view, ContextMenu.ContextMenuInfo contextMenuInfo) {
+
+                            contextMenu.add(0,0,0,"收藏");
+
+                        }
+                    });
+
+
+                return false;
+
+            }
+        });
+
+          careDatabase = new MyDatabaseHelper(this.getActivity() ,"CareDatabase.db", null, 1);
+
+//        Button createDatabase = (Button) findViewById(R.id.create_database);//第一次点击时，会自动检测是否有WordDatabase.db这个数据库，没有则自动创建（表也被创建出来）
+//        createDatabase.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                careDatabase.getWritableDatabase();
+//            }
+//        });
+
+        careButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getActivity(),DBctivity.class);
+                startActivity(intent);
+
+            }
+        });
+
+
         backbutton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -273,6 +330,66 @@ public class ChooseAreaFragment extends Fragment {
 ////            progressDialog.stopNestedScroll();
 //        }
 //    }
+
+
+    public  boolean onContextItemSelected(MenuItem item){//点击收藏
+
+        AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item
+                .getMenuInfo();
+        int wordid = (int) info.id;
+        String s = info.toString();
+
+        switch (item.getItemId()){
+            case 0:
+//                String a=wordid
+                SQLiteDatabase db = careDatabase.getWritableDatabase();
+                ContentValues values=new ContentValues();
+
+                values.put("word",s);
+                //添加插入
+                db.insert("CareTable",null,values);
+//                wordlist.add(a);
+//                ArrayAdapter<String> adapter = new ArrayAdapter<String>(MainActivity.this,R.layout.support_simple_spinner_dropdown_item,wordlist);
+//                ListView listView = (ListView) findViewById(R.id.list_view);
+//                listView.setAdapter(adapter);
+
+
+
+                break;
+
+            default:
+                break;
+
+        }
+        return super.onContextItemSelected(item);
+    }
+    //创建数据库的同时创建表
+
+    public class MyDatabaseHelper extends SQLiteOpenHelper {
+        final String CREATE_CARE = "create table CareTable ("//创建表并定义为字符串常量
+                + "id int,"
+                +"weatherid String,"
+                + "name String)";
+
+        private Context mContext;
+        public MyDatabaseHelper(Context context, String name, SQLiteDatabase.CursorFactory factory, int version) {
+            super(context, name, factory, version);
+
+            mContext = context;
+
+        }
+        @Override
+        public void onCreate(SQLiteDatabase db) {
+            db.execSQL(CREATE_CARE);
+            Toast.makeText(mContext, "Create succeeded", Toast.LENGTH_SHORT).show();//提示创建成功
+        }
+        @Override
+        public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+            db.execSQL("drop table if exists WordTable");
+            onCreate(db);
+
+        }
+    }
 
 }
 

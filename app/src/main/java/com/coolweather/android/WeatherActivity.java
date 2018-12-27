@@ -41,10 +41,8 @@ public class WeatherActivity extends AppCompatActivity {
     private TextView degreeText;
     private TextView weatherInfoText;
     private LinearLayout forecastLayout;
-    private TextView aqiText;
-    private TextView pm25Text;
+
     private TextView comfortText;
-    private TextView carwashText;
     private TextView sportText;
 
 
@@ -60,12 +58,8 @@ public class WeatherActivity extends AppCompatActivity {
         degreeText = (TextView)findViewById(R.id.degree_text);
         weatherInfoText = (TextView)findViewById(R.id.weather_info_text);
         forecastLayout = (LinearLayout)findViewById(R.id.forecast_layout);
-        aqiText = (TextView)findViewById(R.id.aqi_text);
-        pm25Text = (TextView)findViewById(R.id.pm25_text);
         comfortText = (TextView)findViewById(R.id.comfort_text);
-        carwashText = (TextView)findViewById(R.id.car_wash_text);
         sportText = (TextView)findViewById(R.id.sport_text);
-
         drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         navButton = (Button) findViewById(R.id.nav_button);
         navButton.setOnClickListener(new View.OnClickListener() {
@@ -78,7 +72,7 @@ public class WeatherActivity extends AppCompatActivity {
         swipeRefresh = (SwipeRefreshLayout)findViewById(R.id.swipe_refresh);
         swipeRefresh.setColorSchemeResources(R.color.colorPrimary);
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-        String weatherString = prefs.getString("weather",null);
+//        String weatherString = prefs.getString("weather",null);
 //        if(weatherString!=null){
 //            //有缓存时直接解析数据
 //            Weather weather = Utility.handleWeatherResponse(weatherString);
@@ -113,9 +107,11 @@ public class WeatherActivity extends AppCompatActivity {
                     @Override
                     public void run() {
                         Toast.makeText(WeatherActivity.this, "获取天气信息失败", Toast.LENGTH_SHORT).show();
+                        swipeRefresh.setRefreshing(false);
                     }
 
                 });
+
             }
 
             @Override
@@ -140,6 +136,7 @@ public class WeatherActivity extends AppCompatActivity {
 
             }
         });
+
     }
 
     //处理并展示Weather实体类中的数据
@@ -166,15 +163,11 @@ public class WeatherActivity extends AppCompatActivity {
             forecastLayout.addView(view);
 
         }
-        if(weather.aqi!=null){
-            aqiText.setText(weather.aqi.city.aqi);
-            pm25Text.setText(weather.aqi.city.pm25);
-        }
+
         String comfort = "舒适度"+weather.suggestion.comfort.info;
-        String carWash = "洗车指数"+weather.suggestion.carWash.info;
         String sport = "运动建议"+weather.suggestion.sport.info;
         comfortText.setText(comfort);
-        carwashText.setText(carWash);
+
         sportText.setText(sport);
         weatherLayout.setVisibility(View.VISIBLE);
     }

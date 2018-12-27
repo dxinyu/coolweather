@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/colorPrimary"
+    android:background="@drawable/background"
     tools:context="com.coolweather.android.WeatherActivity">
 
     <android.support.v4.widget.DrawerLayout
@@ -36,7 +36,6 @@
             <include layout = "@layout/title"/>
             <include layout = "@layout/now"/>
             <include layout = "@layout/forecast"/>
-            <include layout = "@layout/aqi"/>
             <include layout = "@layout/suggestion"/>
 
         </LinearLayout>

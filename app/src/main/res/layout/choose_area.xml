@@ -3,7 +3,8 @@
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#fff">
+
+    android:background="#ffffff">
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -26,7 +27,27 @@
             android:layout_alignParentLeft="true"
             android:layout_centerVertical="true"
             android:background="@drawable/ic_back"/>
+
+        <Button
+            android:id="@+id/showCare"
+            android:layout_width="25dp"
+            android:layout_height="25dp"
+          android:layout_marginLeft="50dp"
+            android:layout_alignParentLeft="true"
+            android:layout_centerVertical="true"
+            android:background="@drawable/care"/>
+
+
     </RelativeLayout>
+
+    <!--<Button-->
+    <!--android:id="@+id/create_database"-->
+    <!--android:layout_height="wrap_content"-->
+    <!--android:layout_width="match_parent"-->
+    <!--android:text="Create Database"/>-->
+
+
+
 
     <ProgressBar
         android:id="@+id/progress_bar"
